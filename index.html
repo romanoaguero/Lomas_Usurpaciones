@@ -518,7 +518,63 @@
     L.control.watermark({ position: 'bottomleft' }).addTo(map)
     // fin codigo 
 
-        </script>
+ </script>
+
+<!-- Script de la ventana emergente -->
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    let autenticado = false; // Variable de control para rastrear la autenticación
+
+    function mostrarVentanaEmergente() {
+        if (autenticado) {
+            // Si ya está autenticado, no mostrar la ventana emergente
+            return;
+        }
+
+        swal({
+            title: "Ingrese la contraseña:",
+            content: {
+                element: "input",
+                attributes: {
+                    type: "password", // Cambia el tipo de entrada a contraseña
+                },
+            },
+            buttons: {
+                cancel: true,
+                confirm: {
+                    text: "Acceder",
+                    closeModal: false,
+                },
+            },
+        }).then((value) => {
+            if (value === "desarrollo2024") {
+                autenticado = true; // Marcar como autenticado
+                swal("Contraseña correcta...", "", "success");
+                // Desactiva el evento de la ventana emergente
+                document.removeEventListener("mousedown", handleMouseDown);
+            } else {
+                swal("Contraseña incorrecta.", "", "error").then(() => {
+                    // Vuelve a mostrar la ventana emergente
+                    mostrarVentanaEmergente();
+                });
+            }
+        });
+
+        // Agrega un escuchador de eventos para evitar que se cierre al hacer clic fuera de la ventana emergente
+        document.addEventListener("mousedown", handleMouseDown);
+    }
+
+    function handleMouseDown(event) {
+        const modal = document.querySelector(".swal-modal");
+        if (modal && !modal.contains(event.target)) {
+            event.stopPropagation();
+        }
+    }
+
+    // Inicia la primera ventana emergente
+    mostrarVentanaEmergente();
+</script>
     </body>
 </html>
 
